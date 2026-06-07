@@ -17,6 +17,7 @@ export default function Navbar() {
   const links = [
     { href: '/sake', label: '一覧' },
     { href: '/map', label: '地図' },
+    { href: '/analysis', label: '分析' },
   ]
 
   return (
