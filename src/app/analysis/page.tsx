@@ -1,10 +1,10 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AnalysisCharts from '@/components/analysis/AnalysisCharts'
 import type { SakeRecord } from '@/types/database'
 
 export default async function AnalysisPage() {
-  const supabase = await createServerClient()
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 

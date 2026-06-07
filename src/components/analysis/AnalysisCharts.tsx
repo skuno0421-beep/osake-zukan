@@ -160,7 +160,7 @@ export default function AnalysisCharts({ records }: Props) {
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis type="number" domain={[0, 5]} ticks={[1,2,3,4,5]} tick={{ fontSize: 12 }} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={75} />
-              <Tooltip formatter={(v: number) => [`${v}点`, '平均評価']} />
+              <Tooltip formatter={(v) => [`${v}点`, '平均評価']} />
               <Bar dataKey="avg" radius={[0, 4, 4, 0]}>
                 {typeData.map((_, i) => (
                   <Cell key={i} fill={i === 0 ? AMBER : AMBER_LIGHT} />
@@ -179,7 +179,7 @@ export default function AnalysisCharts({ records }: Props) {
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis type="number" domain={[0, 5]} ticks={[1,2,3,4,5]} tick={{ fontSize: 12 }} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} width={65} />
-              <Tooltip formatter={(v: number) => [`${v}点`, '平均評価']} />
+              <Tooltip formatter={(v) => [`${v}点`, '平均評価']} />
               <Bar dataKey="avg" radius={[0, 4, 4, 0]}>
                 {regionData.map((_, i) => (
                   <Cell key={i} fill={i === 0 ? AMBER : AMBER_LIGHT} />
