@@ -74,17 +74,17 @@ export default function InviteContent() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">表示名</label>
             <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)} required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">メールアドレス</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">パスワード</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400" />
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <button type="submit" disabled={loading}
