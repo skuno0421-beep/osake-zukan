@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import DeleteButton from '@/components/sake/DeleteButton'
 import type { SakeRecord, Profile } from '@/types/database'
-import type { SakenomyDetail } from '@/lib/sakenomy'
 
 const RATING_STARS = (r: number) => '★'.repeat(r) + '☆'.repeat(5 - r)
 
@@ -35,15 +34,20 @@ export default async function SakeDetailPage({ params }: { params: Promise<{ id:
     .single()
   const authorName = (profile as Pick<Profile, 'display_name'> | null)?.display_name ?? '不明'
 
-  // Sakenomy 味わいの特徴を取得
+  // Sakenomy 味わいの特徴を取得（直接外部APIを呼ぶ）
   let sakenomyFeature: string | null = null
   if (sakeRecord.sakenomy_id) {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-      const res = await fetch(`${baseUrl}/api/sakenomy/detail?id=${encodeURIComponent(sakeRecord.sakenomy_id)}`, { next: { revalidate: 3600 } })
+      const res = await fetch(
+        `https://api-app.sakenomy.jp/api/Liquors/${encodeURIComponent(sakeRecord.sakenomy_id)}`,
+        {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; osake-zukan/1.0)' },
+          next: { revalidate: 3600 },
+        }
+      )
       if (res.ok) {
-        const detail: SakenomyDetail = await res.json()
-        sakenomyFeature = detail.feature ?? null
+        const data = await res.json()
+        sakenomyFeature = data.feature ?? null
       }
     } catch { /* ignore */ }
   }
