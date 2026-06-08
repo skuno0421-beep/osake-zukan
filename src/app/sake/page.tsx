@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { SakeRecord } from '@/types/database'
-import SakeCard from '@/components/sake/SakeCard'
 import SakeListRow from '@/components/sake/SakeListRow'
 
 const SAKE_TYPES = ['大吟醸', '吟醸', '純米大吟醸', '純米吟醸', '純米', '本醸造', '普通酒']
@@ -21,7 +20,6 @@ const PREFECTURES = [
 export default function SakePage() {
   const [records, setRecords] = useState<SakeRecord[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
 
   const [query, setQuery] = useState('')
   const [filterType, setFilterType] = useState('')
@@ -32,7 +30,14 @@ export default function SakePage() {
   const fetchRecords = useCallback(async () => {
     setLoading(true)
     const supabase = createClient()
-    let q = supabase.from('sake_records').select('*').order(sortBy, { ascending: false })
+
+    // 飲んだ日付順の場合は同日内をcreated_at降順（最新登録が上）で第2ソート
+    let q = supabase.from('sake_records').select('*')
+    if (sortBy === 'drunk_at') {
+      q = q.order('drunk_at', { ascending: false }).order('created_at', { ascending: false })
+    } else {
+      q = q.order(sortBy, { ascending: false }).order('created_at', { ascending: false })
+    }
     if (query) q = q.or(`name.ilike.%${query}%,brewery.ilike.%${query}%`)
     if (filterType) q = q.eq('type', filterType)
     if (filterRegion) q = q.eq('region', filterRegion)
@@ -60,40 +65,30 @@ export default function SakePage() {
           placeholder="銘柄名・蔵元で検索..."
           value={query}
           onChange={e => setQuery(e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
         <div className="flex flex-wrap gap-2">
           <select value={filterType} onChange={e => setFilterType(e.target.value)}
-            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
             <option value="">種類: すべて</option>
             {SAKE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
           <select value={filterRegion} onChange={e => setFilterRegion(e.target.value)}
-            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
             <option value="">産地: すべて</option>
             {PREFECTURES.map(p => <option key={p} value={p}>{p}</option>)}
           </select>
           <select value={filterRating} onChange={e => setFilterRating(e.target.value)}
-            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
             <option value="">評価: すべて</option>
             {[5,4,3,2,1].map(r => <option key={r} value={r}>{'★'.repeat(r)}</option>)}
           </select>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
             <option value="drunk_at">飲んだ日付順</option>
             <option value="rating">評価順</option>
             <option value="created_at">登録順</option>
           </select>
-          <div className="ml-auto flex gap-1">
-            <button onClick={() => setViewMode('card')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition ${viewMode === 'card' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              ▦ カード
-            </button>
-            <button onClick={() => setViewMode('list')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition ${viewMode === 'list' ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-              ☰ リスト
-            </button>
-          </div>
         </div>
       </div>
 
@@ -103,10 +98,6 @@ export default function SakePage() {
         <div className="text-center py-12 text-gray-400">
           <p className="text-4xl mb-2">🍶</p>
           <p>まだ記録がありません。最初の一本を追加しましょう！</p>
-        </div>
-      ) : viewMode === 'card' ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {records.map(s => <SakeCard key={s.id} sake={s} />)}
         </div>
       ) : (
         <div className="space-y-2">

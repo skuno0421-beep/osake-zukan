@@ -37,6 +37,7 @@ export default function SakeForm({ initial }: Props) {
   const [location, setLocation] = useState(initial?.location ?? '')
   const [price, setPrice] = useState(initial?.price?.toString() ?? '')
   const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [sakenomyId, setSakenomyId] = useState(initial?.sakenomy_id ?? '')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.photo_url ?? null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(initial?.photo_url ?? null) // Sakenomy画像URL or アップロードURL
@@ -68,6 +69,7 @@ export default function SakeForm({ initial }: Props) {
     setBrewery(s.brewery)
     if (s.region) setRegion(s.region)
     if (s.type) setType(s.type)
+    setSakenomyId(s.id)
     setSuggestions([])
     setSakenomyFeature(null)
 
@@ -136,6 +138,7 @@ export default function SakeForm({ initial }: Props) {
       price: price ? Number(price) : null,
       notes: notes || null,
       photo_url,
+      sakenomy_id: sakenomyId || null,
     }
 
     if (isEdit) {
