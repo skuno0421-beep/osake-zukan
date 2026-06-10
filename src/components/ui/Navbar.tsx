@@ -18,6 +18,7 @@ export default function Navbar() {
     { href: '/sake', label: '一覧' },
     { href: '/map', label: '地図' },
     { href: '/analysis', label: '分析' },
+    { href: '/backup', label: 'バックアップ' },
   ]
 
   return (
